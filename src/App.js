@@ -32,11 +32,7 @@ function App() {
       </header>
       <main>
         {isLoading && username ? <p>Loading...</p> : ""}
-        {(!isLoading && error && username) || (error && !username) ? (
-          <p>{error}</p>
-        ) : (
-          ""
-        )}
+        {!isLoading && error && username ? <p>{error}</p> : ""}
         {!isLoading && !error && username ? <Profile user={user} /> : ""}
         {!isLoading && !error && username ? (
           <RepositoryList repositories={repositories} />

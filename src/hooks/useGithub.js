@@ -8,12 +8,10 @@ const useGithub = (username) => {
 
   useEffect(() => {
     const fetchGithubUser = () => {
-      //Dont proceed to fetching if username is null
-      if (!username) {
-        setError("Search cant be empty.");
-        return;
-      }
       setTimeout(async () => {
+        if (!username) {
+          return;
+        }
         try {
           setIsLoading(true);
           setError("");
@@ -25,6 +23,10 @@ const useGithub = (username) => {
           );
 
           // Check if the response status is not OK
+          if (response.status === 403) {
+            throw new Error("Forbidden");
+          }
+
           if (!response.ok || !response2.ok) {
             throw new Error("User not found");
           }
