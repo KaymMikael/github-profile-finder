@@ -1,23 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import { useEffect, useState } from "react";
+import Profile from "./components/Profile";
+import useGithub from "./hooks/useGithub";
+import RepositoryList from "./components/RepositoryList";
 
 function App() {
+  const searchParams = new URLSearchParams(window.location.search);
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    setUsername(searchParams.get("username"));
+  }, [searchParams]);
+
+  const { user, isLoading, error, repositories } = useGithub(username);
+  const handleSearchSubmit = (e) => {};
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
+      <header>
+        <h1 className="title">Github Profile Finder</h1>
+        <form className="search-form" onSubmit={handleSearchSubmit}>
+          <label htmlFor="username">Github Name:</label>
+          <input
+            type="text"
+            name="username"
+            id="username"
+            placeholder="Username"
+          />
+          <button type="submit" className="button-submit">
+            Search
+          </button>
+        </form>
       </header>
+      <main>
+        {isLoading && username ? <p>Loading...</p> : ""}
+        {(!isLoading && error && username) || (error && !username) ? (
+          <p>{error}</p>
+        ) : (
+          ""
+        )}
+        {!isLoading && !error && username ? <Profile user={user} /> : ""}
+        {!isLoading && !error && username ? (
+          <RepositoryList repositories={repositories} />
+        ) : (
+          ""
+        )}
+      </main>
     </div>
   );
 }
